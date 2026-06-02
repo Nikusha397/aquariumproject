@@ -130,3 +130,12 @@
 - [2026-06-02] footer-დან ლოგო (fish icon) მოვაშორე, AQUARIA wordmark დავტოვე.
 - [2026-06-02] cart thumbnail ბაგი: sizes=80/96px-ის გამო next/image 96×50 აწვდიდა → cover ზრდიდა → ბუნდოვანი; sizes=240px გავხადე.
 - [2026-06-02] eval: cart thumbnails ახლა 239×125 მოდის, object-cover downscale — მკვეთრი, 0 console error.
+- [2026-06-02] საიტი Vercel-ზე deploy-და (aquariumproject-pied.vercel.app); restart-ზე ცარიელი ბარათები ჩანდა ჩატვირთვამდე.
+- [2026-06-02] hero-ში preloader დავამატე — ფოტოები preload-დება, loading ეკრანი (AQUARIA+spinner) დგას სანამ ჩაიტვირთება; SSR-შივე opacity 1.
+- [2026-06-02] eval: loader არსებობს, images ready-ზე opacity 0 + pointer-none; 6წმ safety timeout; 0 console error.
+- [2026-06-02] მომხმარებელს loading სქრინი არ მოეწონა — სრულად მოვაშორე (spinner-იანი overlay).
+- [2026-06-02] სანაცვლოდ card stage fade-in: imagesReady-მდე opacity 0 (მხოლოდ მუქი ფონი), მერე fade — ცარიელი ბარათები აღარ ჩანს, loader-ის გარეშე.
+- [2026-06-02] eval: loaderPresent false, stageOpacity 1, 3 ფოტო loaded, 0 console error.
+- [2026-06-02] card ბორდერი top/bottom იშლებოდა (3D tilt clipping) — border მოვხსენი, inset ring shadow + isolation + img borderRadius.
+- [2026-06-02] ghost ტექსტს დავამატე მე-2 layer ბარათების წინ (mixBlendMode overlay) — ფოტო რომ ფარავს, სიტყვა watermark-ივით ჩანს.
+- [2026-06-02] eval: ghostCount 2 (normal+overlay), cardBorder 0px, boxShadow inset true, isolation isolate, 0 console error.

@@ -166,7 +166,7 @@ export function HeroCarousel() {
           }}
         />
 
-        {/* giant ghost word */}
+        {/* giant ghost word — behind the cards (bold over the dark bg) */}
         <div
           className="pointer-events-none absolute inset-x-0 flex select-none items-center justify-center"
           style={{ zIndex: 2, top: "9%" }}
@@ -224,10 +224,12 @@ export function HeroCarousel() {
                 zIndex: role.z,
                 borderRadius: 18,
                 overflow: "hidden",
-                border: "1px solid rgba(255,255,255,0.18)",
+                isolation: "isolate",
                 cursor: slot === 0 ? "default" : "pointer",
                 transformStyle: "preserve-3d",
-                boxShadow: role.shadow,
+                // Hairline ring via inset shadow renders cleanly on the tilted
+                // 3D cards (a real border breaks up at the top/bottom edges).
+                boxShadow: `${role.shadow}, inset 0 0 0 1px rgba(255,255,255,0.16)`,
                 transition: "box-shadow 0.6s ease",
                 backgroundColor: "#0b1220",
                 userSelect: "none",
@@ -259,6 +261,7 @@ export function HeroCarousel() {
                       height: "100%",
                       objectFit: "cover",
                       objectPosition: "center",
+                      borderRadius: 18,
                       pointerEvents: "none",
                       userSelect: "none",
                       WebkitUserSelect: "none",
