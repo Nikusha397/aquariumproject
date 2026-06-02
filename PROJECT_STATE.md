@@ -81,3 +81,41 @@
 - [2026-06-02] შევქმენი IntroContext (`src/context/intro.tsx`) revealed მდგომარეობით; Navbar home-ზე იმალება სანამ revealed=false.
 - [2026-06-02] ghost text ოდნავ ზემოთ ავწიე (top 12%) რომ center ფოტოს ზემოთ უკეთ ჩანდეს, არ იფაროს.
 - [2026-06-02] eval-ით დადასტურდა: intro flow მუშაობს (nav opacity 0→1, scroll lock→visible, scrollY=viewport), 12 ფოტო ჩაიტვირთა.
+- [2026-06-02] პროდუქტის ბარათები გავათანაბრე — auto-rows-fr + h-full + price mt-auto; ყველა ბარათი ზუსტად 408px (eval-ით).
+- [2026-06-02] Pillow-ით მოვაშორე Red Sea ლოგო პროდუქტის ფოტოებს — გვერდითი ფონის patch-ით top-left გადავფარე.
+- [2026-06-02] ფასები გადავიყვანე დოლარებში ($) — formatPrice და products/pricing რიცხვები რეალისტურ USD მნიშვნელობებზე.
+- [2026-06-02] navbar intro-ს დროს position:fixed (flow-დან ამოღებული), რომ hero სრულ ეკრანზე დაეტიოს, არ დარჩეს ზოლი.
+- [2026-06-02] HomeShell შევქმენი — Explore More-ზე hero unmount-დება, უკან ვერ ბრუნდები სანამ გვერდს არ გადატვირთავ.
+- [2026-06-02] hero carousel-ს დავამატე autoplay (~2წმ, hover-ზე ჩერდება); eval-ით CORAL→REEF TANK ავტომატურად შეიცვალა.
+- [2026-06-02] ghost text დავპატარავე და ავწიე, center ფოტო ქვემოთ/პატარა — უკანა ტექსტი აღარ იფარება.
+- [2026-06-02] შევქმენი ახალი SVG ლოგო (გრადიენტ emblem + waves) navbar/footer-ში; ძველი Waves icon მოვაშორე.
+- [2026-06-02] CTA ფონი შევცვალე HB-4.mp4 ვიდეოთი (`public/video/`); კატეგორიების SVG-ები რეალური ფოტოებით (`public/categories/`).
+- [2026-06-02] build წარმატებული (23 გვერდი), 0 console error, 0 გატეხილი ფოტო — ყველა ცვლილება eval-ით დადასტურდა.
+- [2026-06-02] hero ფოტოები შევცვალე 4 ნამდვილი აკვარიუმის ავზის ფოტოთი (Philippine reef tank, Manila, balanced marine, nano reef).
+- [2026-06-02] hero ghost labels განვაახლე — REEF TANK / MARINE / AQUASCAPE / NANO REEF (ცალკეული თევზების ნაცვლად).
+- [2026-06-02] center ფოტოს ზომა შევამცირე (height 56%, bottom 8%, scale 1.0) — აღარ იჭრება ქვემოდან, eval: bottom 614<714.
+- [2026-06-02] დადასტურდა UI/UX Pro Max skill დაყენებულია (.claude/skills/ui-ux-pro-max/SKILL.md) და მუშაობს.
+- [2026-06-02] hero carousel მთლიანად გადავწერე — ბარათები ფიზიკურად ცვლიან ადგილს (position exchange), არა fade/replace.
+- [2026-06-02] კლიკზე გვერდითი ბარათი ცენტრში გადადის, ცენტრალური მის ადგილზე — order swap + Framer Motion spring.
+- [2026-06-02] ბარათები ანიმირდება x/y/scale/rotateY(tilt)/blur/boxShadow-ით spring-ით (stiffness 90, damping 16) — 3D perspective 1500.
+- [2026-06-02] იდენტობა შენარჩუნებულია (keyed motion.div, არ unmount-დება), opacity არასდროს 0 — fade არ ხდება.
+- [2026-06-02] eval-ით დადასტურდა: 3 თანმიმდევრული click-ი ცენტრში გადაიტანა დაკლიკებული ბარათი (ok:true×3), 0 console error.
+- [2026-06-02] ფერების glitch გავასწორე — blur და box-shadow CSS transition-ზე გადავიტანე, Framer მხოლოდ transform/opacity-ს ანიმირებს.
+- [2026-06-02] hero 4-დან 3 ფოტომდე — დავტოვე REEF TANK + NANO REEF, მოვაშორე 2 ცუდი, დავამატე ახალი (Saltwater Fish Tank).
+- [2026-06-02] hero ფონის ფერები მუქი გავხადე ყველა ფოტოზე (#06242c/#0a1c33/#0e1430) — აკვარიუმის განწყობა, აღარ კაშკაშა.
+- [2026-06-02] eval: heroCount 3, rootBg rgb(6,36,44) მუქი, swap REEF TANK→SALTWATER მუშაობს, 0 console error.
+- [2026-06-02] ფერების glitch-ის ნამდვილი მიზეზი: კლიკზე ბრაუზერი selection highlight-ს ადებდა ფოტოს — დავამატე user-select:none.
+- [2026-06-02] SALTWATER ფოტო (blurry) შევცვალე ახლით — Great Barrier Reef (portrait 1280×2000), card-ს კარგად ერგება.
+- [2026-06-02] eval: user-select none ბარათზე/stage-ზე, ახალი ფოტო ჩაიტვირთა (1280), swap მუშაობს, 0 console error.
+- [2026-06-02] მომხმარებელმა 3 საკუთარი ფოტო ჩააგდო (ქართული სახელებით); გადავარქვი 1/2/4.jpg-ად მაპინგით.
+- [2026-06-02] hero ფოტოები: 1=nano reef (375², low-res), 2=ფერადი კორალები, 4=galaxy/cosmic; მუქი ფონები მორგებული.
+- [2026-06-02] eval: 3 ფოტო ჩაიტვირთა, galaxy bg rgb(10,17,36) მუქი, ghost GALAXY, 0 console error.
+- [2026-06-02] nano reef (1.jpg) მომხმარებელმა უკეთესი ხარისხით ჩაანაცვლა (736×981); გადავარქვი 1.jpg-ად.
+- [2026-06-02] hero გვერდითი ბარათების blur მოვხსენი (blur 0) — მომხმარებელს არ მოსწონდა; სიღრმე მხოლოდ scale+tilt-ით.
+- [2026-06-02] slide 1 label NANO REEF→AQUASCAPE (ბნელი driftwood ფოტო); ფონი დავაყენე #0b0f16 (dark neutral).
+- [2026-06-02] hero layout დავხვეწე — AQUARIA ზემოთ (top-4), ghost პატარა+დაბლა (top 9%, clamp 52–210), bottom სიმეტრია (sm:left-10).
+- [2026-06-02] Explore More გავასწორე arrows-თან ვერტიკალურად (flex h-12 items-center sm:h-16).
+- [2026-06-02] საიტის ლოგო შევცვალე — მომხმარებლის fish ლოგოს ფონი flood-fill-ით მოვაშორე → public/logo.png (transparent).
+- [2026-06-02] Logo კომპონენტი ახლა /logo.png-ს იყენებს (navbar/footer/mobile), eval: ჩაიტვირთა (natW 258), 0 console error.
+- [2026-06-02] autoplay აღარ ჩერდება ხელით გადართვის შემდეგ — მოვხსენი hover-pause; ტაიმერი order-ის ცვლილებაზე რესტარტდება.
+- [2026-06-02] eval: ხელით click-ის შემდეგ 3.8წმ-ში autoplay თავისით გადაერთო (REEF TANK→AQUASCAPE), 0 console error. Vercel-ისთვის მზადაა.

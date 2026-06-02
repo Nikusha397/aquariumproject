@@ -1,30 +1,89 @@
 "use client";
 
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useIntro } from "@/context/intro";
 
+// Three curated aquarium tank photos with dark, aquarium-like backgrounds
+// tuned to each image. Drop the photos in /public/hero (see filenames).
 const IMAGES = [
-  { src: "/hero/1.jpg", bg: "#0E7490", panel: "#0891B2", label: "CLOWNFISH" },
-  { src: "/hero/2.jpg", bg: "#0D9488", panel: "#14B8A6", label: "CORAL" },
-  { src: "/hero/3.jpg", bg: "#1D4ED8", panel: "#3B82F6", label: "REEF TANK" },
-  { src: "/hero/4.jpg", bg: "#6D28D9", panel: "#8B5CF6", label: "JELLYFISH" },
+  { src: "/hero/1.jpg", bg: "#0b0f16", label: "AQUASCAPE" }, // dark driftwood scape
+  { src: "/hero/2.jpg", bg: "#08090d", label: "REEF TANK" }, // colorful coral, near-black
+  { src: "/hero/4.jpg", bg: "#0a1124", label: "GALAXY" }, // cosmic / deep-space scape
 ];
 
-const EASE = "cubic-bezier(0.4,0,0.2,1)";
-const DUR = 650;
-const AUTOPLAY_MS = 2000;
+const AUTOPLAY_MS = 3200;
 
-type Role = "center" | "left" | "right" | "back";
+// Elastic spring for the physical position exchange.
+const SWAP_SPRING = {
+  type: "spring" as const,
+  stiffness: 90,
+  damping: 16,
+  mass: 1.1,
+};
+
+type Role = {
+  scale: number;
+  rotateY: number;
+  blur: number;
+  opacity: number;
+  z: number;
+  shadow: string;
+};
+
+function roleFor(slot: number, isMobile: boolean): Role {
+  if (slot === 0) {
+    return {
+      scale: 1,
+      rotateY: 0,
+      blur: 0,
+      opacity: 1,
+      z: 40,
+      shadow: "0 30px 70px -22px rgba(0,0,0,0.7)",
+    };
+  }
+  const left = slot === 1;
+  return {
+    scale: isMobile ? 0.62 : 0.76,
+    rotateY: left ? 20 : -20,
+    blur: 0,
+    opacity: 0.92,
+    z: 25,
+    shadow: "0 20px 45px -20px rgba(0,0,0,0.55)",
+  };
+}
+
+function slotCenter(slot: number, w: number, h: number, isMobile: boolean): [number, number] {
+  const P = isMobile
+    ? ([
+        [0.5, 0.55],
+        [0.18, 0.6],
+        [0.82, 0.6],
+      ] as const)
+    : ([
+        [0.5, 0.5],
+        [0.24, 0.54],
+        [0.76, 0.54],
+      ] as const);
+  const [fx, fy] = P[slot];
+  return [fx * w, fy * h];
+}
 
 export function HeroCarousel() {
   const { revealed, reveal } = useIntro();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  // order[0] = center, [1] = left, [2] = right. Values are IMAGE ids.
+  const [order, setOrder] = useState([0, 1, 2]);
   const [isMobile, setIsMobile] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+  const stageRef = useRef<HTMLDivElement>(null);
 
-  // track viewport
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 640);
     onResize();
@@ -32,7 +91,17 @@ export function HeroCarousel() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Lock scrolling to the hero until the visitor enters the site.
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) =>
+      setSize({ w: e.contentRect.width, h: e.contentRect.height }),
+    );
+    ro.observe(el);
+    setSize({ w: el.clientWidth, h: el.clientHeight });
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     if (revealed) return;
     const prev = document.body.style.overflow;
@@ -43,123 +112,53 @@ export function HeroCarousel() {
     };
   }, [revealed]);
 
-  // Auto-advance the carousel; resets on manual navigation, pauses on hover.
+  const swapToCenter = useCallback((id: number) => {
+    setOrder((o) => {
+      const i = o.indexOf(id);
+      if (i <= 0) return o;
+      const next = [...o];
+      [next[0], next[i]] = [next[i], next[0]];
+      return next;
+    });
+  }, []);
+
+  const rotate = useCallback((dir: 1 | -1) => {
+    setOrder((o) => (dir === 1 ? [o[1], o[2], o[0]] : [o[2], o[0], o[1]]));
+  }, []);
+
+  // Always auto-advances. Any manual change updates `order`, which re-runs
+  // this effect and simply restarts the timer — autoplay never stops.
   useEffect(() => {
-    if (paused) return;
-    const t = setTimeout(
-      () => setActiveIndex((p) => (p + 1) % 4),
-      AUTOPLAY_MS,
-    );
+    const t = setTimeout(() => rotate(1), AUTOPLAY_MS);
     return () => clearTimeout(t);
-  }, [activeIndex, paused]);
+  }, [order, rotate]);
 
   const enterSite = useCallback(() => {
     window.scrollTo(0, 0);
     reveal();
   }, [reveal]);
 
-  // preload images
-  useEffect(() => {
-    IMAGES.forEach((img) => {
-      const i = new window.Image();
-      i.src = img.src;
-    });
-  }, []);
-
-  const navigate = useCallback(
-    (dir: "next" | "prev") => {
-      if (isAnimating) return;
-      setIsAnimating(true);
-      setActiveIndex((prev) =>
-        dir === "next" ? (prev + 1) % 4 : (prev + 3) % 4,
-      );
-      setTimeout(() => setIsAnimating(false), DUR);
-    },
-    [isAnimating],
-  );
-
-  const roleOf = (i: number): Role => {
-    if (i === activeIndex) return "center";
-    if (i === (activeIndex + 3) % 4) return "left";
-    if (i === (activeIndex + 1) % 4) return "right";
-    return "back";
-  };
-
-  const styleFor = (role: Role): CSSProperties => {
-    const base: CSSProperties = {
-      position: "absolute",
-      aspectRatio: "0.6 / 1",
-      transition: `transform ${DUR}ms ${EASE}, filter ${DUR}ms ${EASE}, opacity ${DUR}ms ${EASE}, left ${DUR}ms ${EASE}, bottom ${DUR}ms ${EASE}, height ${DUR}ms ${EASE}`,
-      willChange: "transform, filter, opacity",
-    };
-    switch (role) {
-      case "center":
-        return {
-          ...base,
-          left: "50%",
-          bottom: isMobile ? "16%" : "0%",
-          height: isMobile ? "46%" : "64%",
-          transform: `translateX(-50%) scale(${isMobile ? 1.0 : 1.05})`,
-          filter: "none",
-          opacity: 1,
-          zIndex: 20,
-        };
-      case "left":
-        return {
-          ...base,
-          left: isMobile ? "20%" : "30%",
-          bottom: isMobile ? "32%" : "12%",
-          height: isMobile ? "16%" : "28%",
-          transform: "translateX(-50%) scale(1)",
-          filter: "blur(2px)",
-          opacity: 0.85,
-          zIndex: 10,
-        };
-      case "right":
-        return {
-          ...base,
-          left: isMobile ? "80%" : "70%",
-          bottom: isMobile ? "32%" : "12%",
-          height: isMobile ? "16%" : "28%",
-          transform: "translateX(-50%) scale(1)",
-          filter: "blur(2px)",
-          opacity: 0.85,
-          zIndex: 10,
-        };
-      default: // back
-        return {
-          ...base,
-          left: "50%",
-          bottom: isMobile ? "32%" : "12%",
-          height: isMobile ? "13%" : "22%",
-          transform: "translateX(-50%) scale(1)",
-          filter: "blur(4px)",
-          opacity: 1,
-          zIndex: 5,
-        };
-    }
-  };
-
-  const active = IMAGES[activeIndex];
+  const center = IMAGES[order[0]];
+  const { w, h } = size;
+  const cardH = (isMobile ? 0.46 : 0.62) * h;
+  const cardW = cardH * 0.62;
 
   return (
     <div
       className="relative w-full overflow-hidden"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
       style={{
-        backgroundColor: active.bg,
-        transition: `background-color ${DUR}ms ${EASE}`,
+        backgroundColor: center.bg,
+        transition: "background-color 800ms cubic-bezier(0.4,0,0.2,1)",
         fontFamily: "var(--font-sans), sans-serif",
       }}
     >
       <div className="relative w-full" style={{ height: "100vh", overflow: "hidden" }}>
-        {/* 1. grain */}
+        {/* grain */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             zIndex: 50,
-            opacity: 0.4,
+            opacity: 0.35,
             backgroundSize: "200px 200px",
             backgroundRepeat: "repeat",
             backgroundImage:
@@ -167,15 +166,15 @@ export function HeroCarousel() {
           }}
         />
 
-        {/* 2. giant ghost text */}
+        {/* giant ghost word */}
         <div
           className="pointer-events-none absolute inset-x-0 flex select-none items-center justify-center"
-          style={{ zIndex: 2, top: "6%" }}
+          style={{ zIndex: 2, top: "9%" }}
         >
           <span
             style={{
               fontFamily: "var(--font-display), sans-serif",
-              fontSize: "clamp(64px, 18vw, 250px)",
+              fontSize: "clamp(52px, 15vw, 210px)",
               fontWeight: 900,
               color: "#fff",
               opacity: 0.95,
@@ -183,57 +182,98 @@ export function HeroCarousel() {
               textTransform: "uppercase",
               letterSpacing: "-0.02em",
               whiteSpace: "nowrap",
-              transition: `opacity ${DUR}ms ${EASE}`,
+              transition: "opacity 600ms",
             }}
           >
-            {active.label}
+            {center.label}
           </span>
         </div>
 
-        {/* 3. brand */}
+        {/* brand */}
         <div
-          className="absolute left-4 top-6 sm:left-8"
-          style={{
-            zIndex: 60,
-            color: "#fff",
-            opacity: 0.9,
-            letterSpacing: "0.18em",
-          }}
+          className="absolute left-4 top-4 sm:left-8"
+          style={{ zIndex: 60, color: "#fff", opacity: 0.9, letterSpacing: "0.18em" }}
         >
           <span className="text-xs font-semibold uppercase">AQUARIA</span>
         </div>
 
-        {/* 4. carousel */}
-        <div className="absolute inset-0" style={{ zIndex: 3 }}>
-          {IMAGES.map((img, i) => (
-            <div key={img.src} style={styleFor(roleOf(i))}>
-              <div
-                className="h-full w-full overflow-hidden rounded-2xl ring-1 ring-white/20"
-                style={{
-                  boxShadow: "0 30px 70px -20px rgba(0,0,0,0.55)",
-                  backgroundColor: img.panel,
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={img.src}
-                  alt={img.label.toLowerCase()}
-                  draggable={false}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
+        {/* swapping cards stage */}
+        <div
+          ref={stageRef}
+          className="absolute inset-0 select-none"
+          style={{
+            zIndex: 3,
+            perspective: 1500,
+            WebkitTapHighlightColor: "transparent",
+          }}
+        >
+          {w > 0 &&
+            IMAGES.map((img, id) => {
+              const slot = order.indexOf(id);
+              const role = roleFor(slot, isMobile);
+              const [cx, cy] = slotCenter(slot, w, h, isMobile);
+              // Framer animates transform + opacity (spring). blur and shadow are
+              // handled with plain CSS transitions to avoid filter compositing
+              // artifacts during the move.
+              const cardStyle: CSSProperties = {
+                position: "absolute",
+                width: cardW,
+                height: cardH,
+                top: 0,
+                left: 0,
+                zIndex: role.z,
+                borderRadius: 18,
+                overflow: "hidden",
+                border: "1px solid rgba(255,255,255,0.18)",
+                cursor: slot === 0 ? "default" : "pointer",
+                transformStyle: "preserve-3d",
+                boxShadow: role.shadow,
+                transition: "box-shadow 0.6s ease",
+                backgroundColor: "#0b1220",
+                userSelect: "none",
+                WebkitUserSelect: "none",
+                WebkitTapHighlightColor: "transparent",
+              };
+              return (
+                <motion.div
+                  key={img.src}
+                  style={cardStyle}
+                  onClick={() => swapToCenter(id)}
+                  initial={false}
+                  animate={{
+                    x: cx - cardW / 2,
+                    y: cy - cardH / 2,
+                    scale: role.scale,
+                    rotateY: role.rotateY,
+                    opacity: role.opacity,
                   }}
-                />
-              </div>
-            </div>
-          ))}
+                  transition={{ default: SWAP_SPRING, opacity: { duration: 0.5 } }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={img.src}
+                    alt={img.label.toLowerCase()}
+                    draggable={false}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                      WebkitUserSelect: "none",
+                      filter: `blur(${role.blur}px)`,
+                      transition: "filter 0.6s ease",
+                    }}
+                  />
+                </motion.div>
+              );
+            })}
         </div>
 
-        {/* 5. bottom-left copy + nav */}
+        {/* bottom-left copy + arrows */}
         <div
-          className="absolute bottom-6 left-4 sm:bottom-20 sm:left-24"
+          className="absolute bottom-6 left-4 sm:bottom-20 sm:left-10"
           style={{ zIndex: 60, maxWidth: 340 }}
         >
           <p
@@ -261,18 +301,18 @@ export function HeroCarousel() {
             have always wanted. Start today.
           </p>
           <div className="flex gap-3">
-            <NavButton onClick={() => navigate("prev")} aria-label="Previous">
+            <NavButton onClick={() => rotate(-1)} aria-label="Previous">
               <ArrowLeft size={26} strokeWidth={2.25} />
             </NavButton>
-            <NavButton onClick={() => navigate("next")} aria-label="Next">
+            <NavButton onClick={() => rotate(1)} aria-label="Next">
               <ArrowRight size={26} strokeWidth={2.25} />
             </NavButton>
           </div>
         </div>
 
-        {/* 6. bottom-right link */}
+        {/* enter the site */}
         <div
-          className="absolute bottom-6 right-4 sm:bottom-20 sm:right-10"
+          className="absolute bottom-6 right-4 flex h-12 items-center sm:bottom-20 sm:right-10 sm:h-16"
           style={{ zIndex: 60 }}
         >
           <button
@@ -313,9 +353,7 @@ function NavButton({
       onMouseEnter={(e) =>
         (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.12)")
       }
-      onMouseLeave={(e) =>
-        (e.currentTarget.style.backgroundColor = "transparent")
-      }
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
     >
       {children}
     </button>
