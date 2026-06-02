@@ -139,3 +139,9 @@
 - [2026-06-02] card ბორდერი top/bottom იშლებოდა (3D tilt clipping) — border მოვხსენი, inset ring shadow + isolation + img borderRadius.
 - [2026-06-02] ghost ტექსტს დავამატე მე-2 layer ბარათების წინ (mixBlendMode overlay) — ფოტო რომ ფარავს, სიტყვა watermark-ივით ჩანს.
 - [2026-06-02] eval: ghostCount 2 (normal+overlay), cardBorder 0px, boxShadow inset true, isolation isolate, 0 console error.
+- [2026-06-02] stage-ზე opacity fade-მ perspective 3D სცენა დააფლატა → ფოტოები top-left + პიქსელდებოდა; ვუკუვაგდე.
+- [2026-06-02] revert: მოვხსენი ghost overlay layer, stage opacity fade, imagesReady preloader; დავტოვე მხოლოდ ბორდერის ფიქსი.
+- [2026-06-02] eval: ბარათი ცენტრშია (notTopLeft true), border 0px + inset shadow, ghostLayers 1, 0 console error.
+- [2026-06-02] მომხმარებელმა fade/preloader დაბრუნება სთხოვა (ghost-ის გარეშე) — დავაბრუნე, ოღონდ per-card opacity-ით (არა stage-ზე).
+- [2026-06-02] image-load tracking: რენდერებული <img>-ის onLoad/onError/ref (cached) + 5წმ safety; perspective არ ფლატდება.
+- [2026-06-02] dev HMR-მა state გააჭედა — სერვერი გადავტვირთე; სუფთაზე eval: opacities [0.92,1,0.92] visible, ცენტრში, swap მუშაობს, 0 error.

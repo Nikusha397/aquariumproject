@@ -82,7 +82,22 @@ export function HeroCarousel() {
   const [order, setOrder] = useState([0, 1, 2]);
   const [isMobile, setIsMobile] = useState(false);
   const [size, setSize] = useState({ w: 0, h: 0 });
+  // Track which hero photos have decoded so the cards can fade in (per-card
+  // opacity — never on the perspective stage, which would flatten the 3D).
+  const [loadedSrc, setLoadedSrc] = useState<Record<string, true>>({});
+  const [timedOut, setTimedOut] = useState(false);
+  const markLoaded = useCallback((src: string) => {
+    setLoadedSrc((prev) => (prev[src] ? prev : { ...prev, [src]: true }));
+  }, []);
+  const imagesReady =
+    timedOut || Object.keys(loadedSrc).length >= IMAGES.length;
   const stageRef = useRef<HTMLDivElement>(null);
+
+  // Safety net so a slow/failed asset never traps the visitor.
+  useEffect(() => {
+    const t = setTimeout(() => setTimedOut(true), 5000);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 640);
@@ -247,7 +262,7 @@ export function HeroCarousel() {
                     y: cy - cardH / 2,
                     scale: role.scale,
                     rotateY: role.rotateY,
-                    opacity: role.opacity,
+                    opacity: imagesReady ? role.opacity : 0,
                   }}
                   transition={{ default: SWAP_SPRING, opacity: { duration: 0.5 } }}
                 >
@@ -256,6 +271,12 @@ export function HeroCarousel() {
                     src={img.src}
                     alt={img.label.toLowerCase()}
                     draggable={false}
+                    ref={(el) => {
+                      if (el && el.complete && el.naturalWidth > 0)
+                        markLoaded(img.src);
+                    }}
+                    onLoad={() => markLoaded(img.src)}
+                    onError={() => markLoaded(img.src)}
                     style={{
                       width: "100%",
                       height: "100%",
