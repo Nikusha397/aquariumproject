@@ -81,7 +81,7 @@ export default function CheckoutPage() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" required type="tel" placeholder="+995 5xx xx xx xx" />
+                <Input id="phone" required type="tel" placeholder="+1 (555) 000-0000" />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="email">Email</Label>
@@ -89,7 +89,7 @@ export default function CheckoutPage() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="city">City</Label>
-                <Input id="city" required placeholder="Tbilisi" />
+                <Input id="city" required placeholder="City" />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="address">Address</Label>

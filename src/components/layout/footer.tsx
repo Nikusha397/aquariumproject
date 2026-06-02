@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
-import { Logo } from "@/components/logo";
 import { siteConfig, navLinks } from "@/lib/site";
 
 export function Footer() {
@@ -9,7 +8,9 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div className="space-y-3">
           <Link href="/" aria-label={siteConfig.name}>
-            <Logo />
+            <span className="font-display text-xl tracking-[0.18em] text-foreground">
+              {siteConfig.name}
+            </span>
           </Link>
           <p className="max-w-xs text-sm text-muted-foreground">
             {siteConfig.description}

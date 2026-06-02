@@ -2,10 +2,10 @@ export const siteConfig = {
   name: "AQUARIA",
   description:
     "Saltwater aquariums, exotic fish, live corals and premium equipment — from planning to maintenance.",
-  // Replace with the client's real contact details.
-  email: "info@aquaria.ge",
-  phone: "+995 599 00 00 00",
-  address: "Tbilisi, Georgia",
+  // Neutral placeholder contact details (no real location/country).
+  email: "hello@aquaria.com",
+  phone: "+1 (555) 000-0000",
+  address: "Online · Worldwide shipping",
   social: {
     instagram: "https://instagram.com",
     facebook: "https://facebook.com",

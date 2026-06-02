@@ -33,11 +33,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  // Load persisted cart once on mount.
+  // Load persisted cart once on mount. Stale lines (products that no longer
+  // exist, or invalid quantities) are dropped so the cart never shows a count
+  // for items it can't render.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw));
+      if (raw) {
+        const parsed: unknown = JSON.parse(raw);
+        const clean: CartLine[] = Array.isArray(parsed)
+          ? parsed
+              .filter(
+                (l): l is CartLine =>
+                  !!l &&
+                  typeof l.slug === "string" &&
+                  Number.isFinite(l.qty) &&
+                  l.qty > 0 &&
+                  !!getProduct(l.slug),
+              )
+              .map((l) => ({ slug: l.slug, qty: Math.floor(l.qty) }))
+          : [];
+        setItems(clean);
+      }
     } catch {
       // ignore malformed storage
     }

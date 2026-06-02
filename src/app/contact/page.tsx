@@ -53,10 +53,10 @@ export default function ContactPage() {
       </Reveal>
 
       <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_22rem]">
-        <Reveal>
+        <Reveal className="h-full">
           <form
             onSubmit={handleSubmit}
-            className="space-y-4 rounded-2xl border bg-card/50 p-6 backdrop-blur sm:p-8"
+            className="flex h-full flex-col gap-4 rounded-2xl border bg-card/50 p-6 backdrop-blur sm:p-8"
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
@@ -81,15 +81,15 @@ export default function ContactPage() {
                 />
               </div>
             </div>
-            <div className="space-y-1.5">
+            <div className="flex flex-1 flex-col gap-1.5">
               <Label htmlFor="message">Message</Label>
               <Textarea
                 id="message"
                 required
-                rows={6}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
                 placeholder="How can we help?"
+                className="min-h-40 flex-1"
               />
             </div>
             <Button type="submit" size="lg" className="glow w-full sm:w-auto">

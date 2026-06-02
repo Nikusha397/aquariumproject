@@ -119,3 +119,11 @@
 - [2026-06-02] Logo კომპონენტი ახლა /logo.png-ს იყენებს (navbar/footer/mobile), eval: ჩაიტვირთა (natW 258), 0 console error.
 - [2026-06-02] autoplay აღარ ჩერდება ხელით გადართვის შემდეგ — მოვხსენი hover-pause; ტაიმერი order-ის ცვლილებაზე რესტარტდება.
 - [2026-06-02] eval: ხელით click-ის შემდეგ 3.8წმ-ში autoplay თავისით გადაერთო (REEF TANK→AQUASCAPE), 0 console error. Vercel-ისთვის მზადაა.
+- [2026-06-02] cart bug: ძველი slug-ები localStorage-ში count-ს ზრდიდა მაგრამ არ ჩანდა — load-ზე ვალიდურ პროდუქტებად ვფილტრავ.
+- [2026-06-02] eval: stale cart ([clownfish,reefer-g3,qty0]) → "Cart (1)", localStorage გაიწმინდა reefer-g3-მდე; reload-ზე persist მუშაობს.
+- [2026-06-02] საკონტაქტო მონაცემები ნეიტრალური გავხადე (ქვეყანა არ ჟონავს): email hello@aquaria.com, phone +1(555), address "Online · Worldwide".
+- [2026-06-02] checkout placeholder-ები (Tbilisi/+995) ნეიტრალურით შევცვალე; grep: src-ში აღარაა Georgia/.ge/995/Tbilisi.
+- [2026-06-02] contact ფორმის grid გავაბალანსე [1fr_22rem]→[1.3fr_1fr] items-start — უფრო პროპორციული form/info.
+- [2026-06-02] მომხმარებელს ძველი ზომები ერჩივნა — დავაბრუნე [1fr_22rem]; ფორმა h-full გავწელე, textarea flex-1 — ბარათების სიმაღლეს ეტოლება.
+- [2026-06-02] eval (1280px): formCol და infoCol ორივე 372px, bottom 701px, aligned:true — ფორმა ბარათების ბოლომდე.
+- [2026-06-02] favicon/tab icon დავაყენე ლოგოდან — public/logo.png → src/app/icon.png (512²) + favicon.ico; Next-მა icon links დააგენერირა.
