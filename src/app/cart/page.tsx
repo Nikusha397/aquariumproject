@@ -58,7 +58,7 @@ export default function CartPage() {
                   <ProductMedia
                     product={product}
                     className="size-24"
-                    sizes="96px"
+                    sizes="240px"
                   />
                 </Link>
                 <div className="flex flex-1 flex-col">

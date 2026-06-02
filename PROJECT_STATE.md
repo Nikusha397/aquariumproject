@@ -127,3 +127,6 @@
 - [2026-06-02] მომხმარებელს ძველი ზომები ერჩივნა — დავაბრუნე [1fr_22rem]; ფორმა h-full გავწელე, textarea flex-1 — ბარათების სიმაღლეს ეტოლება.
 - [2026-06-02] eval (1280px): formCol და infoCol ორივე 372px, bottom 701px, aligned:true — ფორმა ბარათების ბოლომდე.
 - [2026-06-02] favicon/tab icon დავაყენე ლოგოდან — public/logo.png → src/app/icon.png (512²) + favicon.ico; Next-მა icon links დააგენერირა.
+- [2026-06-02] footer-დან ლოგო (fish icon) მოვაშორე, AQUARIA wordmark დავტოვე.
+- [2026-06-02] cart thumbnail ბაგი: sizes=80/96px-ის გამო next/image 96×50 აწვდიდა → cover ზრდიდა → ბუნდოვანი; sizes=240px გავხადე.
+- [2026-06-02] eval: cart thumbnails ახლა 239×125 მოდის, object-cover downscale — მკვეთრი, 0 console error.

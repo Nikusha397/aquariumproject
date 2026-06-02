@@ -67,7 +67,7 @@ export function CartSheet() {
                       <ProductMedia
                         product={product}
                         className="size-20"
-                        sizes="80px"
+                        sizes="240px"
                       />
                     </Link>
                     <div className="flex flex-1 flex-col">
